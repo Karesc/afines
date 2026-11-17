@@ -1,0 +1,2119 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Laboratorio interactivo de transformaciones afines, isometrías y teorema de Mazur-Ulam.">
+<title>Transformaciones Afines | Álgebra Lineal</title>
+
+<style>
+:root {
+ --bg:#0b1120;
+ --panel:#142039;
+ --panel2:#1c2c49;
+ --text:#edf3ff;
+ --muted:#a9bad2;
+ --cyan:#50d9e9;
+ --purple:#b49aff;
+ --orange:#ffb86b;
+ --green:#78e0b0;
+ --yellow:#ffe28a;
+ --red:#ff8585;
+}
+
+* {box-sizing:border-box;margin:0;padding:0}
+
+html {scroll-behavior:smooth}
+
+body {
+ background:var(--bg);
+ color:var(--text);
+ font-family:Inter,Segoe UI,Arial,sans-serif;
+ line-height:1.7;
+}
+
+header {
+ min-height:78vh;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ text-align:center;
+ padding:65px 20px;
+ background:radial-gradient(ellipse at 50% 25%,#2b426d,#111c30 55%,#0b1120 100%);
+}
+
+header h1 {
+ font-size:clamp(2.4rem,6vw,5rem);
+ line-height:1.15;
+}
+
+header h1 span {color:var(--cyan)}
+
+header p {
+ max-width:760px;
+ color:var(--muted);
+ margin:20px auto;
+ font-size:1.1rem;
+}
+
+.hero-formula {
+ font-size:clamp(1.8rem,4vw,3rem);
+ color:var(--purple);
+ margin:25px;
+}
+
+.hero-button {
+ display:inline-block;
+ background:var(--cyan);
+ color:#071322;
+ padding:12px 25px;
+ border-radius:9px;
+ text-decoration:none;
+ font-weight:bold;
+ margin-top:15px;
+}
+
+nav {
+ position:sticky;
+ top:0;
+ z-index:20;
+ display:flex;
+ justify-content:center;
+ flex-wrap:wrap;
+ gap:8px 20px;
+ padding:14px;
+ background:#101b30;
+ border-bottom:1px solid #344665;
+}
+
+nav a {
+ color:var(--muted);
+ text-decoration:none;
+ font-size:.88rem;
+}
+
+nav a:hover {color:var(--cyan)}
+
+section {
+ max-width:1120px;
+ margin:auto;
+ padding:75px 24px;
+}
+
+h2 {
+ color:var(--cyan);
+ font-size:clamp(1.7rem,4vw,2.3rem);
+ margin-bottom:22px;
+}
+
+h3 {
+ color:var(--purple);
+ margin:20px 0 10px;
+}
+
+h4 {
+ color:var(--green);
+ margin-bottom:8px;
+}
+
+p {
+ color:var(--muted);
+ margin:13px 0;
+}
+
+ul,ol {
+ padding-left:24px;
+ color:var(--muted);
+ margin:12px 0;
+}
+
+li {margin:7px 0}
+
+strong {color:var(--text)}
+
+.card {
+ background:var(--panel);
+ border:1px solid #30415c;
+ padding:23px;
+ border-radius:13px;
+ margin:18px 0;
+}
+
+.formula {
+ background:var(--panel2);
+ border-left:4px solid var(--cyan);
+ padding:20px;
+ text-align:center;
+ margin:20px 0;
+ border-radius:8px;
+ font-size:1.16rem;
+ overflow-x:auto;
+}
+
+.purple {color:var(--purple)}
+.cyan {color:var(--cyan)}
+.orange {color:var(--orange)}
+.green {color:var(--green)}
+.yellow {color:var(--yellow)}
+
+.grid2 {
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:18px;
+}
+
+.grid3 {
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:15px;
+}
+
+.badge {
+ display:inline-block;
+ padding:4px 10px;
+ border-radius:20px;
+ background:#263b58;
+ color:var(--cyan);
+ font-size:.78rem;
+ margin-bottom:12px;
+}
+
+.lab {
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 280px;
+ gap:18px;
+}
+
+.canvas-box {
+ background:#091323;
+ border:1px solid #344968;
+ border-radius:12px;
+ overflow:hidden;
+}
+
+canvas {
+ display:block;
+ width:100%;
+ height:auto;
+ touch-action:none;
+}
+
+.controls {
+ background:var(--panel);
+ border:1px solid #30415c;
+ border-radius:12px;
+ padding:18px;
+}
+
+.control {margin:14px 0}
+
+.control label {
+ display:flex;
+ justify-content:space-between;
+ color:var(--muted);
+ font-size:.9rem;
+}
+
+input[type=range] {
+ width:100%;
+ accent-color:var(--cyan);
+ margin-top:8px;
+}
+
+button {
+ background:var(--panel2);
+ color:var(--text);
+ border:1px solid #435b7b;
+ border-radius:8px;
+ padding:10px 13px;
+ margin:4px 2px;
+ cursor:pointer;
+}
+
+button:hover {background:#30476b}
+
+button.active {
+ background:var(--cyan);
+ color:#081323;
+ font-weight:bold;
+}
+
+button:focus-visible {
+ outline:2px solid white;
+ outline-offset:3px;
+}
+
+.button-row {
+ display:flex;
+ flex-wrap:wrap;
+ gap:5px;
+ margin:12px 0;
+}
+
+.legend {
+ display:flex;
+ flex-wrap:wrap;
+ gap:12px;
+ margin:13px 0;
+ color:var(--muted);
+ font-size:.84rem;
+}
+
+.legend span {
+ display:flex;
+ align-items:center;
+ gap:6px;
+}
+
+.dot {
+ width:10px;
+ height:10px;
+ border-radius:50%;
+ display:inline-block;
+}
+
+.data {
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:9px;
+}
+
+.data div {
+ background:var(--panel2);
+ padding:12px;
+ border-radius:8px;
+ font-size:.9rem;
+ overflow-wrap:anywhere;
+}
+
+.data strong {
+ display:block;
+ color:var(--cyan);
+}
+
+.status {
+ background:#102c2b;
+ border:1px solid #367b67;
+ padding:14px;
+ border-radius:9px;
+ margin:12px 0;
+}
+
+.warning {
+ background:#392c1d;
+ border-color:#94703c;
+}
+
+.proof-step {
+ display:none;
+ border:1px solid #465d7d;
+ background:var(--panel);
+ border-radius:12px;
+ padding:24px;
+ margin:20px 0;
+ min-height:200px;
+}
+
+.proof-step.active {display:block}
+
+.step-number {
+ color:var(--cyan);
+ font-size:.85rem;
+ font-weight:bold;
+ letter-spacing:2px;
+}
+
+.progress {
+ height:7px;
+ background:#253650;
+ border-radius:10px;
+ overflow:hidden;
+ margin:18px 0;
+}
+
+.progress-bar {
+ height:100%;
+ background:var(--cyan);
+ width:0%;
+ transition:.3s;
+}
+
+.step-controls {
+ display:flex;
+ justify-content:space-between;
+ flex-wrap:wrap;
+ gap:10px;
+}
+
+.equation {
+ font-family:Georgia,serif;
+ font-size:1.12rem;
+ color:var(--yellow);
+ text-align:center;
+ padding:15px 5px;
+ overflow-x:auto;
+}
+
+.reference {
+ font-size:.88rem;
+ overflow-wrap:anywhere;
+}
+
+footer {
+ text-align:center;
+ padding:40px 20px;
+ border-top:1px solid #30415c;
+ color:var(--muted);
+}
+
+@media(max-width:850px) {
+ .lab {grid-template-columns:1fr}
+ .grid3 {grid-template-columns:1fr}
+ .grid2 {grid-template-columns:1fr}
+ nav {gap:8px 12px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <span class="badge">ÁLGEBRA LINEAL · LABORATORIO INTERACTIVO</span>
+
+ <h1>Transformaciones <span>Afines</span></h1>
+
+ <p>
+ De las transformaciones lineales a las isometrías:
+ una exploración geométrica del teorema de Mazur-Ulam.
+ </p>
+
+ <div class="hero-formula">f(x) = T(x) + b</div>
+
+ <p>
+ ¿Qué relación existe entre la conservación de distancias,
+ los puntos medios y la estructura afín de una transformación?
+ </p>
+
+ <a class="hero-button" href="#concepto">Comenzar exploración ↓</a>
+</header>
+
+<nav>
+ <a href="#concepto">Concepto</a>
+ <a href="#afin">Transformaciones afines</a>
+ <a href="#laboratorio">Laboratorio</a>
+ <a href="#teorema">Teorema</a>
+ <a href="#demostracion">Demostración</a>
+ <a href="#ejercicios">Ejercicios</a>
+</nav>
+
+<!-- ================================================= -->
+<!-- 1. CONCEPTO -->
+<!-- ================================================= -->
+
+<section id="concepto">
+
+ <span class="badge">MÓDULO 01</span>
+ <h2>1. Transformaciones lineales</h2>
+
+ <p>
+ Comenzamos recordando la estructura de los espacios vectoriales.
+ Una transformación lineal entre espacios vectoriales
+ V y W es una aplicación T:V→W que satisface:
+ </p>
+
+ <div class="formula">
+  T(x+y)=T(x)+T(y)
+  <br><br>
+  T(λx)=λT(x)
+ </div>
+
+ <p>
+ Estas propiedades implican que T conserva las combinaciones
+ lineales. En particular:
+ </p>
+
+ <div class="formula">
+  T(0)=0
+ </div>
+
+ <div class="grid2">
+  <div class="card">
+   <h3>Conservación del origen</h3>
+   <p>
+    Toda transformación lineal envía el vector cero
+    al vector cero.
+   </p>
+  </div>
+
+  <div class="card">
+   <h3>Representación matricial</h3>
+   <p>
+    En dimensión finita, una transformación lineal
+    puede representarse mediante una matriz.
+   </p>
+  </div>
+ </div>
+
+ <div class="formula">
+  T(x)=Ax
+ </div>
+
+ <h3>Ejemplos geométricos</h3>
+
+ <div class="grid3">
+  <div class="card">
+   <h4>Rotación</h4>
+   <p>
+    Cambia la orientación de los vectores sin modificar
+    sus longitudes cuando la matriz es ortogonal.
+   </p>
+   <div class="equation">A = [cos θ, −sin θ; sin θ, cos θ]</div>
+  </div>
+
+  <div class="card">
+   <h4>Escalamiento</h4>
+   <p>
+    Modifica las longitudes de los vectores mediante
+    factores de escala.
+   </p>
+   <div class="equation">A = [k, 0; 0, k]</div>
+  </div>
+
+  <div class="card">
+   <h4>Reflexión</h4>
+   <p>
+    Invierte una dirección respecto a una recta
+    que pasa por el origen.
+   </p>
+   <div class="equation">A = [1, 0; 0, −1]</div>
+  </div>
+ </div>
+
+</section>
+
+<!-- ================================================= -->
+<!-- 2. TRANSFORMACIONES AFINES -->
+<!-- ================================================= -->
+
+<section id="afin">
+
+ <span class="badge">MÓDULO 02</span>
+ <h2>2. Transformaciones afines</h2>
+
+ <p>
+ Una transformación afín generaliza las transformaciones
+ lineales al permitir un desplazamiento del origen.
+ </p>
+
+ <div class="formula">
+  <strong>Definición.</strong>
+  <br><br>
+  Sean V y W espacios vectoriales reales.
+  Una aplicación f:V→W es afín si existen una
+  transformación lineal T:V→W y un vector fijo b∈W
+  tales que:
+  <br><br>
+  f(x)=T(x)+b.
+ </div>
+
+ <p>
+ En coordenadas, si A es la matriz asociada a T:
+ </p>
+
+ <div class="formula">
+  f(x)=Ax+b
+ </div>
+
+ <h3>Interpretación geométrica</h3>
+
+ <div class="grid2">
+  <div class="card">
+   <h4>Primera operación: transformación lineal</h4>
+   <p>
+    La matriz A rota, refleja, estira, comprime o
+    inclina la figura.
+   </p>
+  </div>
+
+  <div class="card">
+   <h4>Segunda operación: traslación</h4>
+   <p>
+    El vector b desplaza todos los puntos por igual.
+   </p>
+  </div>
+ </div>
+
+ <div class="formula">
+  x → Ax → Ax+b
+ </div>
+
+ <h3>Ejemplo en el plano</h3>
+
+ <p>
+ Consideremos:
+ </p>
+
+ <div class="formula">
+  A = [2, 0; 0, 1]
+  <br><br>
+  b = (3, 2)
+ </div>
+
+ <p>
+ Entonces:
+ </p>
+
+ <div class="formula">
+  f(x,y)=(2x+3,y+2)
+ </div>
+
+ <p>
+ El plano se estira horizontalmente y posteriormente
+ se desplaza tres unidades a la derecha y dos hacia arriba.
+ </p>
+
+ <h3>Propiedad: conservación de puntos medios</h3>
+
+ <p>
+ Sean P,Q∈V y sea M su punto medio:
+ </p>
+
+ <div class="formula">
+  M=(P+Q)/2.
+ </div>
+
+ <p>
+ Como f(x)=Ax+b:
+ </p>
+
+ <div class="formula">
+  f(M)=A((P+Q)/2)+b
+  <br><br>
+  =(AP+AQ)/2+b
+  <br><br>
+  =(AP+b+AQ+b)/2
+  <br><br>
+  =[f(P)+f(Q)]/2.
+ </div>
+
+ <div class="status">
+  <strong>Conclusión:</strong>
+  Toda transformación afín conserva los puntos medios.
+  Sin embargo, no necesariamente conserva las distancias.
+ </div>
+
+</section>
+
+<!-- ================================================= -->
+<!-- 3. LABORATORIO -->
+<!-- ================================================= -->
+
+<section id="laboratorio">
+
+ <span class="badge">MÓDULO 03</span>
+ <h2>3. Laboratorio de puntos medios</h2>
+
+ <p>
+ Arrastra P y Q directamente sobre el plano.
+ Modifica la matriz A y el vector de traslación.
+ Observa las imágenes de los puntos y verifica
+ las propiedades de la transformación.
+ </p>
+
+ <div class="legend">
+  <span><i class="dot" style="background:#50d9e9"></i>P y Q</span>
+  <span><i class="dot" style="background:#78e0b0"></i>M</span>
+  <span><i class="dot" style="background:#ffb86b"></i>f(P), f(Q)</span>
+  <span><i class="dot" style="background:#ffe28a"></i>f(M)</span>
+  <span><i class="dot" style="background:#b49aff"></i>Segmento imagen</span>
+ </div>
+
+ <div class="lab">
+
+  <div>
+   <div class="canvas-box">
+    <canvas id="plane" width="760" height="600"></canvas>
+   </div>
+
+   <div class="button-row">
+    <button id="modeP" class="active" onclick="setMode('P')">
+     Mover P
+    </button>
+    <button id="modeQ" onclick="setMode('Q')">
+     Mover Q
+    </button>
+    <button onclick="resetPoints()">Reiniciar puntos</button>
+   </div>
+
+   <div class="button-row">
+    <button id="originalButton" class="active"
+      onclick="toggleOriginal()">Originales</button>
+    <button id="imageButton" class="active"
+      onclick="toggleImage()">Imágenes</button>
+    <button id="midButton" class="active"
+      onclick="toggleMid()">Punto medio</button>
+   </div>
+
+   <div class="card">
+    <h3>Coordenadas</h3>
+    <div class="data" id="coordinates"></div>
+   </div>
+
+   <div class="card">
+    <h3>Verificación del punto medio</h3>
+    <div class="equation" id="midpointCalculation"></div>
+    <div class="status" id="midpointResult"></div>
+   </div>
+
+   <div class="card">
+    <h3>Conservación de distancias</h3>
+    <div class="data" id="distanceData"></div>
+    <div class="status" id="distanceResult"></div>
+   </div>
+
+  </div>
+
+  <div class="controls">
+
+   <h3>Matriz A</h3>
+
+   <div class="control">
+    <label>a <span id="va"></span></label>
+    <input type="range" id="a" min="-2" max="2"
+      step=".05" value="1">
+   </div>
+
+   <div class="control">
+    <label>b <span id="vb"></span></label>
+    <input type="range" id="b" min="-2" max="2"
+      step=".05" value="0">
+   </div>
+
+   <div class="control">
+    <label>c <span id="vc"></span></label>
+    <input type="range" id="c" min="-2" max="2"
+      step=".05" value="0">
+   </div>
+
+   <div class="control">
+    <label>d <span id="vd"></span></label>
+    <input type="range" id="d" min="-2" max="2"
+      step=".05" value="1">
+   </div>
+
+   <h3>Traslación b</h3>
+
+   <div class="control">
+    <label>u <span id="vu"></span></label>
+    <input type="range" id="u" min="-3" max="3"
+      step=".1" value="1">
+   </div>
+
+   <div class="control">
+    <label>v <span id="vv"></span></label>
+    <input type="range" id="v" min="-3" max="3"
+      step=".1" value=".5">
+   </div>
+
+   <div class="card">
+    <h4>Matriz actual</h4>
+    <div class="equation" id="matrix"></div>
+    <p>Determinante: <strong id="det"></strong></p>
+   </div>
+
+   <h3>Ejemplos</h3>
+
+   <div class="button-row">
+    <button onclick="preset('identity')">Identidad</button>
+    <button onclick="preset('rotation')">Rotación</button>
+    <button onclick="preset('reflection')">Reflexión</button>
+    <button onclick="preset('shear')">Cizallamiento</button>
+    <button onclick="preset('stretch')">Estiramiento</button>
+   </div>
+
+   <p class="small">
+    Una matriz ortogonal satisface AᵀA=I y conserva
+    las distancias euclidianas.
+   </p>
+
+  </div>
+ </div>
+
+</section>
+
+<!-- ================================================= -->
+<!-- 4. ISOMETRIAS -->
+<!-- ================================================= -->
+
+<section id="isometrias">
+
+ <span class="badge">MÓDULO 04</span>
+ <h2>4. Isometrías</h2>
+
+ <div class="formula">
+  <strong>Definición.</strong>
+  <br><br>
+  Una aplicación f:X→Y entre espacios normados
+  es una isometría si:
+  <br><br>
+  ||f(x)-f(y)||=||x-y||
+  <br><br>
+  para todo x,y∈X.
+ </div>
+
+ <p>
+ Una isometría conserva las distancias entre cualquier
+ par de puntos. En particular, conserva las longitudes
+ de los segmentos.
+ </p>
+
+ <h3>Isometrías afines en el plano euclidiano</h3>
+
+ <p>
+ Para una transformación afín f(x)=Ax+b, conservar
+ todas las distancias equivale a que A sea ortogonal:
+ </p>
+
+ <div class="formula">
+  AᵀA=I
+ </div>
+
+ <p>
+ En el plano, esto incluye rotaciones, reflexiones
+ y sus composiciones con traslaciones.
+ </p>
+
+ <div class="grid2">
+  <div class="card">
+   <h4>Isometría</h4>
+   <p>
+    La figura cambia de posición u orientación,
+    pero conserva todas sus distancias.
+   </p>
+   <div class="formula">||f(P)-f(Q)||=||P-Q||</div>
+  </div>
+
+  <div class="card">
+   <h4>Transformación afín general</h4>
+   <p>
+    Puede modificar longitudes y ángulos,
+    aunque conserva los puntos medios.
+   </p>
+   <div class="formula">f(M)=[f(P)+f(Q)]/2</div>
+  </div>
+ </div>
+
+ <div class="status">
+  <strong>Observación:</strong>
+  En espacios normados generales, las isometrías
+  lineales no tienen por qué representarse mediante
+  matrices ortogonales. Esa condición corresponde
+  al caso euclidiano.
+ </div>
+
+</section>
+
+<!-- ================================================= -->
+<!-- 5. REFLEXIONES -->
+<!-- ================================================= -->
+
+<section id="reflexiones">
+
+ <span class="badge">MÓDULO 05</span>
+ <h2>5. Reflexiones respecto a un punto</h2>
+
+ <p>
+ La reflexión central respecto a un punto z de un
+ espacio vectorial se define mediante:
+ </p>
+
+ <div class="formula">
+  R<sub>z</sub>(x)=2z-x
+ </div>
+
+ <h3>Propiedades</h3>
+
+ <div class="card">
+  <p><strong>1. Es una isometría:</strong></p>
+  <div class="formula">
+   ||R<sub>z</sub>(x)-R<sub>z</sub>(y)||=||x-y||
+  </div>
+
+  <p><strong>2. Es su propia inversa:</strong></p>
+  <div class="formula">
+   R<sub>z</sub>∘R<sub>z</sub>=I
+  </div>
+
+  <p><strong>3. Tiene un único punto fijo:</strong></p>
+  <div class="formula">
+   R<sub>z</sub>(x)=x ⇔ x=z
+  </div>
+
+  <p><strong>4. Intercambia los extremos de un segmento</strong>
+  cuando z es su punto medio.</p>
+ </div>
+
+ <h3>Experimento de reflexión</h3>
+
+ <p>
+ Considera dos puntos P y Q y su punto medio M.
+ La reflexión respecto a M intercambia los extremos.
+ </p>
+
+ <div class="formula">
+  R<sub>M</sub>(P)=Q
+  <br><br>
+  R<sub>M</sub>(Q)=P
+ </div>
+
+ <div class="card">
+  <h3>¿Por qué es importante?</h3>
+  <p>
+   La reflexión permite construir nuevas isometrías
+   a partir de una isometría conocida. Esta es la
+   herramienta principal de la demostración de
+   Mazur-Ulam que estudiaremos a continuación.
+  </p>
+ </div>
+
+</section>
+
+<!-- ================================================= -->
+<!-- 6. TEOREMA -->
+<!-- ================================================= -->
+
+<section id="teorema">
+
+ <span class="badge">MÓDULO 06</span>
+ <h2>6. Teorema de Mazur-Ulam</h2>
+
+ <div class="card">
+  <h3>Enunciado del teorema</h3>
+
+  Sean X e Y espacios normados sobre los números reales.
+  Si f:X→Y es una isometría sobreyectiva, entonces f
+  es una transformación afín.
+
+  Es decir, existe una transformación lineal
+  T:X→Y y un vector b∈Y tales que:
+
+  <div class="formula">
+   f(x)=T(x)+b
+  </div>
+
+  Además, T es una isometría lineal.
+ </div>
+
+ <h3>¿Qué significan las hipótesis?</h3>
+
+ <div class="card">
+  <h4>1. Espacios normados reales</h4>
+  <p>
+   X e Y son espacios vectoriales reales equipados
+   con una norma que permite medir la longitud de
+   sus vectores.
+  </p>
+
+  <h4>2. Isometría</h4>
+  <p>
+   La aplicación conserva las distancias:
+  </p>
+  <div class="formula">
+   ||f(x)-f(y)||=||x-y||
+  </div>
+
+  <h4>3. Sobreyectividad</h4>
+  <p>
+   Todo elemento de Y es imagen de algún elemento
+   de X. Por tanto, para cada y∈Y existe x∈X
+   tal que f(x)=y.
+  </p>
+ </div>
+
+ <h3>¿Qué concluye el teorema?</h3>
+
+ <p>
+ La conservación de distancias, junto con la
+ sobreyectividad, impone una estructura algebraica
+ muy específica:
+ </p>
+
+ <div class="formula">
+  f(x)=T(x)+f(0)
+ </div>
+
+ <p>
+ donde:
+ </p>
+
+ <div class="formula">
+  T(x)=f(x)-f(0)
+ </div>
+
+ <p>
+ es lineal y conserva las distancias.
+ </p>
+
+ <h3>Una advertencia importante</h3>
+
+ <p>
+ No es suficiente que una aplicación conserve distancias
+ si no es sobreyectiva. Por ejemplo:
+ </p>
+
+ <div class="formula">
+  g(t)=(t,|t|)
+ </div>
+
+ <p>
+ define una isometría de R con la norma usual hacia
+ R² equipado con la norma del máximo:
+ </p>
+
+ <div class="formula">
+  ||(u,v)||∞=max{|u|,|v|}
+ </div>
+
+ <p>
+ En efecto:
+ </p>
+
+ <div class="formula">
+  ||g(s)-g(t)||∞=|s-t|
+ </div>
+
+ <p>
+ pero g no es afín. Su imagen es solamente una curva
+ dentro de R², por lo que no es sobreyectiva.
+ </p>
+
+ <div class="status warning">
+  La sobreyectividad es una hipótesis esencial del
+  teorema de Mazur-Ulam.
+ </div>
+
+</section>
+
+<!-- ================================================= -->
+<!-- 7. DEMOSTRACIÓN INTERACTIVA -->
+<!-- ================================================= -->
+
+<section id="demostracion">
+
+ <span class="badge">MÓDULO 07</span>
+ <h2>7. Demostración interactiva</h2>
+
+ <p>
+ Vamos a estudiar la demostración mediante reflexiones.
+ El objetivo es probar que una isometría sobreyectiva
+ conserva los puntos medios.
+ </p>
+
+ <div class="card">
+  <h3>Planteamiento</h3>
+
+  Sean x,y∈X y definamos:
+  <div class="formula">
+   m=(x+y)/2
+  </div>
+
+  En Y consideremos:
+  <div class="formula">
+   m'=(f(x)+f(y))/2
+  </div>
+
+  Queremos demostrar:
+  <div class="formula">
+   f(m)=m'
+  </div>
+
+  Definimos el defecto de punto medio:
+  <div class="formula">
+   δ(f)=||f(m)-m'||
+  </div>
+
+  Nuestro objetivo es demostrar que δ(f)=0.
+ </div>
+
+ <h3>Recorre la demostración</h3>
+
+ <p>
+ Avanza paso a paso. Cada etapa introduce una idea
+ y explica por qué es necesaria.
+ </p>
+
+ <div class="progress">
+  <div class="progress-bar" id="progress"></div>
+ </div>
+
+ <div class="proof-step active" id="step0">
+  <div class="step-number">PASO 1 DE 7</div>
+  <h3>Fijamos dos puntos y sus puntos medios</h3>
+
+  Sean x,y∈X.
+
+  <div class="formula">
+   m=(x+y)/2
+   <br><br>
+   m'=(f(x)+f(y))/2
+  </div>
+
+  La cantidad que queremos estudiar es:
+  <div class="formula">
+   δ(f)=||f(m)-m'||
+  </div>
+
+  Si δ(f)=0, entonces f conserva el punto medio.
+
+  <p>
+   La demostración consiste en probar que no puede
+   existir una isometría sobreyectiva con δ(f)>0.
+  </p>
+ </div>
+
+ <div class="proof-step" id="step1">
+  <div class="step-number">PASO 2 DE 7</div>
+  <h3>Obtenemos una cota para el defecto</h3>
+
+  Por la desigualdad triangular:
+  <div class="formula">
+   δ(f) ≤ ||f(m)-f(x)||/2
+   + ||f(m)-f(y)||/2
+  </div>
+
+  Como f es una isometría:
+  <div class="formula">
+   ||f(m)-f(x)||=||m-x||
+  </div>
+
+  <div class="formula">
+   ||f(m)-f(y)||=||m-y||
+  </div>
+
+  Pero:
+  <div class="formula">
+   ||m-x||=||m-y||=||x-y||/2
+  </div>
+
+  Por tanto:
+  <div class="formula">
+   <strong>δ(f) ≤ ||x-y||/2</strong>
+  </div>
+
+  <div class="status">
+   El defecto siempre está acotado, independientemente
+   de la isometría que consideremos.
+  </div>
+ </div>
+
+ <div class="proof-step" id="step2">
+  <div class="step-number">PASO 3 DE 7</div>
+  <h3>Construimos una reflexión en el espacio de llegada</h3>
+
+  Definimos la reflexión respecto a m':
+  <div class="formula">
+   R<sub>m'</sub>(z)=2m'-z
+  </div>
+
+  Esta aplicación es una isometría biyectiva.
+
+  Además, intercambia f(x) y f(y):
+  <div class="formula">
+   R<sub>m'</sub>(f(x))=f(y)
+   <br><br>
+   R<sub>m'</sub>(f(y))=f(x)
+  </div>
+
+  Su punto fijo es exactamente m'.
+
+  <div class="status">
+   La reflexión cambia el signo del vector
+   f(m)-m', pero conserva su longitud.
+  </div>
+ </div>
+
+ <div class="proof-step" id="step3">
+  <div class="step-number">PASO 4 DE 7</div>
+  <h3>Usamos la sobreyectividad</h3>
+
+  Como f es sobreyectiva y es una isometría,
+  tiene inversa f⁻¹:Y→X, que también es una isometría.
+
+  Definimos una nueva aplicación:
+  <div class="formula">
+   g=f⁻¹ ∘ R<sub>m'</sub> ∘ f
+  </div>
+
+  Esta composición es una isometría biyectiva
+  de X en X.
+
+  Observemos qué sucede con los extremos:
+  <div class="formula">
+   g(x)=y
+   <br><br>
+   g(y)=x
+  </div>
+
+  Por lo tanto, el punto medio de las imágenes
+  de x e y bajo g sigue siendo m.
+
+  <div class="status">
+   La nueva isometría intercambia los extremos
+   del segmento original.
+  </div>
+ </div>
+
+ <div class="proof-step" id="step4">
+  <div class="step-number">PASO 5 DE 7</div>
+  <h3>El defecto se duplica</h3>
+
+  El punto medio de g(x) y g(y) es m.
+
+  Por definición:
+  <div class="formula">
+   δ(g)=||g(m)-m||
+  </div>
+
+  Como g=f⁻¹∘R<sub>m'</sub>∘f:
+  <div class="formula">
+   δ(g)=||f⁻¹(R<sub>m'</sub>(f(m)))-m||
+  </div>
+
+  Usando que f⁻¹ es una isometría:
+  <div class="formula">
+   δ(g)=||R<sub>m'</sub>(f(m))-f(m)||
+  </div>
+
+  Pero una reflexión respecto a m' satisface:
+  <div class="formula">
+   ||R<sub>m'</sub>(z)-z||
+   =2||z-m'||
+  </div>
+
+  Finalmente:
+  <div class="formula">
+   <strong>δ(g)=2δ(f)</strong>
+  </div>
+
+  <div class="status">
+   Hemos construido una nueva isometría cuyo
+   defecto es el doble del anterior.
+  </div>
+ </div>
+
+ <div class="proof-step" id="step5">
+  <div class="step-number">PASO 6 DE 7</div>
+  <h3>Iteramos la construcción</h3>
+
+  Repetimos el procedimiento.
+
+  Partiendo de f₀=f, obtenemos isometrías
+  f₁,f₂,f₃,... tales que:
+  <div class="formula">
+   δ(f₁)=2δ(f₀)
+  </div>
+
+  <div class="formula">
+   δ(f₂)=4δ(f₀)
+  </div>
+
+  <div class="formula">
+   δ(fₙ)=2ⁿδ(f₀)
+  </div>
+
+  Pero en el paso 2 demostramos que toda
+  isometría tiene un defecto acotado:
+  <div class="formula">
+   δ(fₙ)≤||x-y||/2
+  </div>
+
+  Por consiguiente:
+  <div class="formula">
+   2ⁿδ(f₀)≤||x-y||/2
+  </div>
+
+  Esto no puede cumplirse para todo n si
+  δ(f₀)>0.
+
+  <div class="status warning">
+   La única posibilidad es que δ(f₀)=0.
+  </div>
+ </div>
+
+ <div class="proof-step" id="step6">
+  <div class="step-number">PASO 7 DE 7</div>
+  <h3>Conservación de puntos medios y conclusión</h3>
+
+  Hemos demostrado que:
+  <div class="formula">
+   f((x+y)/2)=(f(x)+f(y))/2
+  </div>
+
+  para cualesquiera x,y∈X.
+
+  Definimos:
+  <div class="formula">
+   T(x)=f(x)-f(0)
+  </div>
+
+  Entonces T(0)=0 y T conserva puntos medios.
+
+  Tomando los puntos x,y:
+  <div class="formula">
+   T((x+y)/2)=[T(x)+T(y)]/2
+  </div>
+
+  Tomando y=0:
+  <div class="formula">
+   T(x/2)=T(x)/2
+  </div>
+
+  De ambas identidades:
+  <div class="formula">
+   T(x+y)=T(x)+T(y)
+  </div>
+
+  Por tanto, T es aditiva.
+
+  Como T es una isometría, es continua.
+  La aditividad y continuidad implican que:
+  <div class="formula">
+   T(λx)=λT(x)
+   <br><br>
+   para todo λ∈R.
+  </div>
+
+  Por consiguiente, T es lineal.
+
+  <div class="status">
+   <strong>Teorema demostrado:</strong>
+   <div class="formula">
+    f(x)=T(x)+f(0)
+   </div>
+   La isometría sobreyectiva es afín.
+  </div>
+ </div>
+
+ <div class="step-controls">
+  <button onclick="previousStep()">← Anterior</button>
+  <span id="stepCounter" class="badge">Paso 1 de 7</span>
+  <button class="active" onclick="nextStep()">Siguiente →</button>
+ </div>
+
+ <h3>Experimento: duplicación del defecto</h3>
+
+ <p>
+ Modifica el defecto inicial y observa cómo crece
+ después de cada iteración. La cota permanece fija.
+ </p>
+
+ <div class="card">
+
+  <div class="control">
+   <label>
+    Defecto inicial δ₀
+    <span id="initialDefectLabel">0.10</span>
+   </label>
+   <input type="range" id="initialDefect"
+     min="0" max="0.5" step=".01" value=".1">
+  </div>
+
+  <div class="control">
+   <label>
+    Iteración
+    <span id="iterationLabel">0</span>
+   </label>
+   <input type="range" id="iteration"
+     min="0" max="12" step="1" value="0">
+  </div>
+
+  <div class="control">
+   <label>
+    Cota superior ||x-y||/2
+    <span id="boundLabel">1.00</span>
+   </label>
+   <input type="range" id="bound"
+     min=".1" max="2" step=".1" value="1">
+  </div>
+
+  <div class="formula" id="defectEquation">
+   δ₀ = 0.10
+  </div>
+
+  <div class="canvas-box">
+   <canvas id="defectCanvas" width="700" height="300"></canvas>
+  </div>
+
+  <div class="data" id="defectData"></div>
+
+  <div class="status" id="defectConclusion"></div>
+
+  <p class="small">
+   Este experimento representa el argumento algebraico
+   de la demostración. No pretende construir las funciones
+   completas fₙ, sino visualizar la relación exacta
+   entre sus defectos.
+  </p>
+ </div>
+
+</section>
+
+<!-- ================================================= -->
+<!-- 8. CONSECUENCIAS -->
+<!-- ================================================= -->
+
+<section id="consecuencias">
+
+ <span class="badge">MÓDULO 08</span>
+ <h2>8. Consecuencias del teorema</h2>
+
+ <h3>Caracterización mediante puntos medios</h3>
+
+ <div class="card">
+  Si una aplicación f entre espacios vectoriales reales
+  conserva todos los puntos medios, entonces es afín
+  siempre que se cumplan las condiciones habituales
+  de continuidad (por ejemplo, si f es continua).
+
+  <div class="formula">
+   f((x+y)/2)=(f(x)+f(y))/2
+  </div>
+
+  En efecto, definiendo T(x)=f(x)-f(0), se obtiene
+  aditividad y continuidad, y por tanto linealidad.
+ </div>
+
+ <h3>La parte lineal también es una isometría</h3>
+
+ <p>
+ Si f es una isometría y T(x)=f(x)-f(0), entonces:
+ </p>
+
+ <div class="formula">
+  ||T(x)-T(y)||
+  =||f(x)-f(y)||
+  =||x-y||
+ </div>
+
+ <p>
+ Por tanto, la transformación lineal obtenida
+ también conserva las distancias.
+ </p>
+
+ <h3>La estructura final</h3>
+
+ <div class="formula">
+  Isometría sobreyectiva
+  <br><br>
+  ↓
+  <br><br>
+  Conservación de puntos medios
+  <br><br>
+  ↓
+  <br><br>
+  Aplicación aditiva y continua
+  <br><br>
+  ↓
+  <br><br>
+  Aplicación lineal después de trasladar el origen
+  <br><br>
+  ↓
+  <br><br>
+  f(x)=T(x)+b
+ </div>
+
+</section>
+
+<!-- ================================================= -->
+<!-- 9. EJERCICIOS -->
+<!-- ================================================= -->
+
+<section id="ejercicios">
+
+ <span class="badge">MÓDULO 09</span>
+ <h2>9. Comprueba lo aprendido</h2>
+
+ <div class="card">
+  <h3>Ejercicio 1</h3>
+  <p>
+   Considera f:R²→R² dada por:
+  </p>
+  <div class="formula">
+   f(x,y)=(2x+1,y-3)
+  </div>
+  ¿Es una transformación afín?
+  <div class="button-row">
+   <button onclick="answer(1,'yes')">Sí</button>
+   <button onclick="answer(1,'no')">No</button>
+  </div>
+  <p id="answer1"></p>
+ </div>
+
+ <div class="card">
+  <h3>Ejercicio 2</h3>
+  <p>
+   ¿Toda transformación afín conserva las distancias?
+  </p>
+  <div class="button-row">
+   <button onclick="answer(2,'yes')">Sí</button>
+   <button onclick="answer(2,'no')">No</button>
+  </div>
+  <p id="answer2"></p>
+ </div>
+
+ <div class="card">
+  <h3>Ejercicio 3</h3>
+  <p>
+   ¿Qué hipótesis adicional necesita una isometría
+   para aplicar el teorema de Mazur-Ulam?
+  </p>
+  <div class="button-row">
+   <button onclick="answer(3,'continuity')">Continuidad</button>
+   <button onclick="answer(3,'surjectivity')">Sobreyectividad</button>
+   <button onclick="answer(3,'linearity')">Linealidad</button>
+  </div>
+  <p id="answer3"></p>
+ </div>
+
+ <div class="card">
+  <h3>Ejercicio 4</h3>
+  <p>
+   Si f(x)=Ax+b y M=(P+Q)/2, ¿cuál es la expresión
+   de f(M)?
+  </p>
+  <div class="button-row">
+   <button onclick="answer(4,'a')">Af(P)+f(Q)</button>
+   <button onclick="answer(4,'b')">[f(P)+f(Q)]/2</button>
+   <button onclick="answer(4,'c')">f(P)+f(Q)</button>
+  </div>
+  <p id="answer4"></p>
+ </div>
+
+ <div class="card">
+  <h3>Ejercicio 5</h3>
+  <p>
+   ¿Qué propiedad permite concluir que una aplicación
+   aditiva es lineal sobre los reales?
+  </p>
+  <div class="button-row">
+   <button onclick="answer(5,'continuity')">Continuidad</button>
+   <button onclick="answer(5,'surjectivity')">Sobreyectividad</button>
+   <button onclick="answer(5,'injectivity')">Inyectividad</button>
+  </div>
+  <p id="answer5"></p>
+ </div>
+
+</section>
+
+<!-- ================================================= -->
+<!-- REFERENCIAS -->
+<!-- ================================================= -->
+
+<section id="referencias">
+
+ <span class="badge">LECTURAS</span>
+ <h2>10. Referencias bibliográficas</h2>
+
+ <div class="card reference">
+  <p>
+   <strong>Mazur, S. y Ulam, S. (1932).</strong>
+   Sur les transformations isométriques d'espaces
+   vectoriels normés. Comptes Rendus de l'Académie
+   des Sciences de Paris, 194, 946–948.
+  </p>
+
+  <p>
+   <strong>Väisälä, J. (2003).</strong>
+   A proof of the Mazur-Ulam theorem.
+   The American Mathematical Monthly, 110(7), 633–635.
+  </p>
+
+  <a href="https://citeseerx.ist.psu.edu/document?doi=a4398fe2edd61360c3a616f5d35d8b656dd16ebd&repid=rep1&type=pdf"
+     target="_blank" rel="noopener" style="color:var(--cyan)">
+     Consultar el artículo de Väisälä
+  </a>
+
+  <p>
+   <strong>Nica, B. (2013).</strong>
+   The Mazur-Ulam theorem. Una demostración mediante
+   reflexiones.
+  </p>
+
+  <a href="https://citeseerx.ist.psu.edu/document?doi=92fcce281da159719717b4505053f2d4edb2768d&repid=rep1&type=pdf"
+     target="_blank" rel="noopener" style="color:var(--cyan)">
+     Consultar el artículo de Nica
+  </a>
+ </div>
+
+</section>
+
+<footer>
+ <h3>Álgebra Lineal</h3>
+ <p>Transformaciones afines y teorema de Mazur-Ulam.</p>
+ <p>Laboratorio interactivo de matemáticas.</p>
+</footer>
+
+<!-- ================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ================================================= -->
+
+<script>
+
+// ===========================================
+// A. LABORATORIO DE TRANSFORMACIONES
+// ===========================================
+
+const canvas=document.getElementById("plane");
+const ctx=canvas.getContext("2d");
+
+const W=canvas.width;
+const H=canvas.height;
+const SCALE=45;
+
+let P={x:-3,y:1};
+let Q={x:2,y:3};
+let mode="P";
+let dragging=false;
+
+let showOriginal=true;
+let showImage=true;
+let showMid=true;
+
+const ids=["a","b","c","d","u","v"];
+
+function values(){
+ return Object.fromEntries(
+  ids.map(id=>[id,Number(document.getElementById(id).value)])
+ );
+}
+
+function f(X,p){
+ return {
+  x:p.a*X.x+p.b*X.y+p.u,
+  y:p.c*X.x+p.d*X.y+p.v
+ };
+}
+
+function mid(X,Y){
+ return {
+  x:(X.x+Y.x)/2,
+  y:(X.y+Y.y)/2
+ };
+}
+
+function dist(X,Y){
+ return Math.hypot(X.x-Y.x,X.y-Y.y);
+}
+
+function screen(X){
+ return [
+  W/2+X.x*SCALE,
+  H/2-X.y*SCALE
+ ];
+}
+
+function world(x,y){
+ return {
+  x:(x-W/2)/SCALE,
+  y:(H/2-y)/SCALE
+ };
+}
+
+function drawGrid(){
+
+ ctx.clearRect(0,0,W,H);
+ ctx.strokeStyle="#24354e";
+ ctx.lineWidth=1;
+
+ for(let x=0;x<=W;x+=SCALE){
+  ctx.beginPath();
+  ctx.moveTo(x,0);
+  ctx.lineTo(x,H);
+  ctx.stroke();
+ }
+
+ for(let y=0;y<=H;y+=SCALE){
+  ctx.beginPath();
+  ctx.moveTo(0,y);
+  ctx.lineTo(W,y);
+  ctx.stroke();
+ }
+
+ ctx.strokeStyle="#8296b2";
+ ctx.lineWidth=1.7;
+
+ ctx.beginPath();
+ ctx.moveTo(0,H/2);
+ ctx.lineTo(W,H/2);
+ ctx.moveTo(W/2,0);
+ ctx.lineTo(W/2,H);
+ ctx.stroke();
+
+ ctx.fillStyle="#edf3ff";
+ ctx.font="13px sans-serif";
+ ctx.fillText("x",W-18,H/2-10);
+ ctx.fillText("y",W/2+10,16);
+
+ for(let i=-7;i<=7;i++){
+  if(i===0)continue;
+  let [sx,sy]=screen({x:i,y:0});
+  ctx.fillText(i,sx-4,sy+17);
+  [sx,sy]=screen({x:0,y:i});
+  ctx.fillText(i,sx+8,sy+4);
+ }
+}
+
+function line(X,Y,color,width=2,dash=[]){
+
+ const [x1,y1]=screen(X);
+ const [x2,y2]=screen(Y);
+
+ ctx.beginPath();
+ ctx.setLineDash(dash);
+ ctx.moveTo(x1,y1);
+ ctx.lineTo(x2,y2);
+ ctx.strokeStyle=color;
+ ctx.lineWidth=width;
+ ctx.stroke();
+ ctx.setLineDash([]);
+}
+
+function point(X,color,label,r=7){
+
+ const [x,y]=screen(X);
+
+ ctx.beginPath();
+ ctx.arc(x,y,r,0,Math.PI*2);
+ ctx.fillStyle=color;
+ ctx.fill();
+
+ ctx.strokeStyle="#fff";
+ ctx.lineWidth=1.2;
+ ctx.stroke();
+
+ ctx.fillStyle=color;
+ ctx.font="bold 15px sans-serif";
+ ctx.fillText(label,x+10,y-10);
+}
+
+function draw(){
+
+ const p=values();
+ const M=mid(P,Q);
+
+ const FP=f(P,p);
+ const FQ=f(Q,p);
+ const FM=f(M,p);
+
+ drawGrid();
+
+ if(showOriginal){
+  line(P,Q,"#50d9e9",3);
+  point(P,"#50d9e9","P");
+  point(Q,"#50d9e9","Q");
+ }
+
+ if(showImage){
+  line(FP,FQ,"#b49aff",3);
+  line(P,FP,"#ffb86b",1.5,[5,5]);
+  line(Q,FQ,"#ffb86b",1.5,[5,5]);
+  point(FP,"#ffb86b","f(P)");
+  point(FQ,"#ffb86b","f(Q)");
+ }
+
+ if(showMid){
+  point(M,"#78e0b0","M",8);
+  if(showImage)point(FM,"#ffe28a","f(M)",9);
+ }
+
+ updateLabData(p,M,FP,FQ,FM);
+}
+
+function fmt(X){
+ return `(${X.x.toFixed(3)}, ${X.y.toFixed(3)})`;
+}
+
+function updateLabData(p,M,FP,FQ,FM){
+
+ const right=mid(FP,FQ);
+ const error=dist(FM,right);
+
+ document.getElementById("coordinates").innerHTML=`
+  <div><strong>P</strong>${fmt(P)}</div>
+  <div><strong>Q</strong>${fmt(Q)}</div>
+  <div><strong>M</strong>${fmt(M)}</div>
+  <div><strong>f(P)</strong>${fmt(FP)}</div>
+  <div><strong>f(Q)</strong>${fmt(FQ)}</div>
+  <div><strong>f(M)</strong>${fmt(FM)}</div>
+ `;
+
+ document.getElementById("midpointCalculation").innerHTML=`
+  f(M)=${fmt(FM)}
+  <br><br>
+  [f(P)+f(Q)]/2=${fmt(right)}
+  <br><br>
+  Error=${error.toExponential(3)}
+ `;
+
+ document.getElementById("midpointResult").textContent=
+  error<1e-9
+  ?"✓ La transformación conserva el punto medio."
+  :"Comprueba los datos.";
+
+ const original=dist(P,Q);
+ const transformed=dist(FP,FQ);
+ const determinant=p.a*p.d-p.b*p.c;
+
+ document.getElementById("distanceData").innerHTML=`
+  <div><strong>Original</strong>${original.toFixed(4)}</div>
+  <div><strong>Transformada</strong>${transformed.toFixed(4)}</div>
+  <div><strong>Determinante</strong>${determinant.toFixed(4)}</div>
+  <div><strong>Razón</strong>
+  ${original>1e-12?(transformed/original).toFixed(4):"No definida"}
+  </div>
+ `;
+
+ const orthogonal=
+  Math.abs(p.a*p.a+p.c*p.c-1)<1e-8 &&
+  Math.abs(p.b*p.b+p.d*p.d-1)<1e-8 &&
+  Math.abs(p.a*p.b+p.c*p.d)<1e-8;
+
+ document.getElementById("distanceResult").innerHTML=
+  orthogonal
+  ?"✓ A es ortogonal. Se conservan todas las distancias."
+  :"A no es ortogonal. No es una isometría euclidiana.";
+}
+
+function updateMatrix(){
+
+ const p=values();
+
+ ids.forEach(id=>{
+  document.getElementById("v"+id).textContent=
+   p[id].toFixed(2);
+ });
+
+ document.getElementById("matrix").innerHTML=`
+  [ ${p.a.toFixed(2)} &nbsp; ${p.b.toFixed(2)} ]
+  <br>
+  [ ${p.c.toFixed(2)} &nbsp; ${p.d.toFixed(2)} ]
+ `;
+
+ document.getElementById("det").textContent=
+  (p.a*p.d-p.b*p.c).toFixed(4);
+}
+
+ids.forEach(id=>{
+ document.getElementById(id).addEventListener("input",()=>{
+  updateMatrix();
+  draw();
+ });
+});
+
+// Arrastrar puntos
+
+function pointerPos(event){
+ const rect=canvas.getBoundingClientRect();
+ return {
+  x:(event.clientX-rect.left)*W/rect.width,
+  y:(event.clientY-rect.top)*H/rect.height
+ };
+}
+
+function nearest(pos){
+ const a=screen(P);
+ const b=screen(Q);
+ return Math.hypot(pos.x-a[0],pos.y-a[1])<
+        Math.hypot(pos.x-b[0],pos.y-b[1])?"P":"Q";
+}
+
+canvas.addEventListener("pointerdown",event=>{
+ const pos=pointerPos(event);
+ mode=nearest(pos);
+ dragging=true;
+ canvas.setPointerCapture(event.pointerId);
+ updateMode();
+});
+
+canvas.addEventListener("pointermove",event=>{
+ if(!dragging)return;
+ const pos=pointerPos(event);
+ const X=world(pos.x,pos.y);
+ if(mode==="P")P=X;
+ else Q=X;
+ draw();
+});
+
+canvas.addEventListener("pointerup",()=>dragging=false);
+canvas.addEventListener("pointercancel",()=>dragging=false);
+
+function updateMode(){
+ document.getElementById("modeP").classList.toggle("active",mode==="P");
+ document.getElementById("modeQ").classList.toggle("active",mode==="Q");
+}
+
+function setMode(m){
+ mode=m;
+ updateMode();
+}
+
+function resetPoints(){
+ P={x:-3,y:1};
+ Q={x:2,y:3};
+ draw();
+}
+
+function toggleOriginal(){
+ showOriginal=!showOriginal;
+ document.getElementById("originalButton").classList.toggle("active",showOriginal);
+ draw();
+}
+
+function toggleImage(){
+ showImage=!showImage;
+ document.getElementById("imageButton").classList.toggle("active",showImage);
+ draw();
+}
+
+function toggleMid(){
+ showMid=!showMid;
+ document.getElementById("midButton").classList.toggle("active",showMid);
+ draw();
+}
+
+function setValues(array){
+ ids.forEach((id,i)=>{
+  document.getElementById(id).value=array[i];
+ });
+ updateMatrix();
+ draw();
+}
+
+function preset(name){
+
+ if(name==="identity")setValues([1,0,0,1,0,0]);
+
+ if(name==="rotation"){
+  const t=Math.PI/4;
+  setValues([
+   Math.cos(t),-Math.sin(t),
+   Math.sin(t),Math.cos(t),1,.5
+  ]);
+ }
+
+ if(name==="reflection")setValues([1,0,0,-1,1,.5]);
+
+ if(name==="shear")setValues([1,.8,0,1,1,.5]);
+
+ if(name==="stretch")setValues([1.8,0,0,.7,1,.5]);
+}
+
+// ===========================================
+// B. NAVEGACIÓN DE LA DEMOSTRACIÓN
+// ===========================================
+
+let currentStep=0;
+const totalSteps=7;
+
+function showStep(n){
+
+ currentStep=Math.max(0,Math.min(totalSteps-1,n));
+
+ document.querySelectorAll(".proof-step").forEach((el,i)=>{
+  el.classList.toggle("active",i===currentStep);
+ });
+
+ document.getElementById("progress").style.width=
+  ((currentStep+1)/totalSteps*100)+"%";
+
+ document.getElementById("stepCounter").textContent=
+  `Paso ${currentStep+1} de ${totalSteps}`;
+}
+
+function nextStep(){
+ showStep(currentStep+1);
+}
+
+function previousStep(){
+ showStep(currentStep-1);
+}
+
+// ===========================================
+// C. EXPERIMENTO DE DUPLICACIÓN
+// ===========================================
+
+const defectCanvas=document.getElementById("defectCanvas");
+const dctx=defectCanvas.getContext("2d");
+
+const initialInput=document.getElementById("initialDefect");
+const iterationInput=document.getElementById("iteration");
+const boundInput=document.getElementById("bound");
+
+function drawDefect(){
+
+ const d0=Number(initialInput.value);
+ const n=Number(iterationInput.value);
+ const bound=Number(boundInput.value);
+
+ const defect=d0*Math.pow(2,n);
+
+ document.getElementById("initialDefectLabel").textContent=d0.toFixed(2);
+ document.getElementById("iterationLabel").textContent=n;
+ document.getElementById("boundLabel").textContent=bound.toFixed(2);
+
+ document.getElementById("defectEquation").innerHTML=`
+  δ<sub>${n}</sub>=2<sup>${n}</sup>δ<sub>0</sub>
+  <br><br>
+  δ<sub>${n}</sub>=${defect.toFixed(5)}
+ `;
+
+ const c=dctx;
+ const w=defectCanvas.width;
+ const h=defectCanvas.height;
+
+ c.clearRect(0,0,w,h);
+
+ const left=55;
+ const right=w-25;
+ const top=40;
+ const bottom=h-55;
+
+ const max=Math.max(bound,defect,0.01)*1.15;
+
+ function Y(v){
+  return bottom-(v/max)*(bottom-top);
+ }
+
+ // Ejes
+ c.strokeStyle="#8195af";
+ c.lineWidth=1.5;
+ c.beginPath();
+ c.moveTo(left,top);
+ c.lineTo(left,bottom);
+ c.lineTo(right,bottom);
+ c.stroke();
+
+ // Cota
+ c.setLineDash([7,5]);
+ c.strokeStyle="#ffb86b";
+ c.beginPath();
+ c.moveTo(left,Y(bound));
+ c.lineTo(right,Y(bound));
+ c.stroke();
+ c.setLineDash([]);
+
+ c.fillStyle="#ffb86b";
+ c.font="bold 14px sans-serif";
+ c.fillText("Cota = "+bound.toFixed(2),left+8,Y(bound)-9);
+
+ // Barras
+ const count=n+1;
+ const available=right-left;
+ const bw=Math.min(38,available/count*.48);
+ const gap=available/count;
+
+ for(let i=0;i<=n;i++){
+
+  const val=d0*Math.pow(2,i);
+  const x=left+gap*(i+.5)-bw/2;
+  const y=Y(val);
+
+  c.fillStyle=i===n?"#ffe28a":"#50d9e9";
+  c.fillRect(x,y,bw,bottom-y);
+
+  c.fillStyle="#edf3ff";
+  c.font="12px sans-serif";
+  c.textAlign="center";
+  c.fillText(val.toFixed(2),x+bw/2,Math.max(top+12,y-7));
+  c.fillText("n="+i,x+bw/2,bottom+23);
+ }
+
+ c.textAlign="left";
+
+ document.getElementById("defectData").innerHTML=`
+  <div><strong>Defecto inicial</strong>${d0.toFixed(4)}</div>
+  <div><strong>Defecto actual</strong>${defect.toFixed(4)}</div>
+  <div><strong>Cota superior</strong>${bound.toFixed(4)}</div>
+  <div><strong>Factor de crecimiento</strong>${Math.pow(2,n).toFixed(0)}</div>
+ `;
+
+ const conclusion=document.getElementById("defectConclusion");
+
+ if(d0===0){
+  conclusion.className="status";
+  conclusion.innerHTML=
+   "El defecto inicial es cero. Todas las iteraciones permanecen en cero.";
+ } else if(defect>bound){
+  conclusion.className="status warning";
+  conclusion.innerHTML=
+   "Contradicción: el defecto calculado supera la cota que toda isometría debe satisfacer. Por tanto, un defecto inicial positivo es imposible.";
+ } else {
+  conclusion.className="status";
+  conclusion.innerHTML=
+   "El defecto todavía está dentro de la cota. Continúa iterando: si el defecto inicial es positivo, acabará superándola.";
+ }
+}
+
+[initialInput,iterationInput,boundInput].forEach(input=>{
+ input.addEventListener("input",drawDefect);
+});
+
+// ===========================================
+// D. EJERCICIOS
+// ===========================================
+
+const answers={
+ 1:{
+  correct:"yes",
+  yes:"✓ Correcto. Es de la forma Ax+b.",
+  no:"No. La aplicación sí es afín: A=diag(2,1) y b=(1,-3)."
+ },
+ 2:{
+  correct:"no",
+  yes:"No necesariamente. Un estiramiento es afín, pero no conserva distancias.",
+  no:"✓ Correcto. Las transformaciones afines generales no tienen por qué ser isometrías."
+ },
+ 3:{
+  correct:"surjectivity",
+  continuity:"La continuidad no sustituye a la hipótesis de sobreyectividad.",
+  surjectivity:"✓ Correcto. La sobreyectividad permite utilizar la inversa de la isometría.",
+  linearity:"No. La linealidad es parte de la conclusión, no de la hipótesis."
+ },
+ 4:{
+  correct:"b",
+  a:"No. La expresión correcta es el promedio de las imágenes.",
+  b:"✓ Correcto. Las transformaciones afines conservan los puntos medios.",
+  c:"No. Falta dividir entre dos."
+ },
+ 5:{
+  correct:"continuity",
+  continuity:"✓ Correcto. La aditividad junto con continuidad implica homogeneidad real.",
+  surjectivity:"No es la propiedad utilizada en este paso.",
+  injectivity:"No es suficiente para obtener homogeneidad real."
+ }
+};
+
+function answer(number,choice){
+
+ const item=answers[number];
+ const output=document.getElementById("answer"+number);
+
+ output.textContent=item[choice];
+ output.style.color=choice===item.correct?"#78e0b0":"#ffb86b";
+}
+
+// ===========================================
+// INICIALIZACIÓN
+// ===========================================
+
+updateMatrix();
+draw();
+showStep(0);
+drawDefect();
+
+</script>
+
+</body>
+</html>
